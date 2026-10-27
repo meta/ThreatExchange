@@ -267,7 +267,11 @@ def _match_file(
     assert issubclass(s_type, FileHasher)
 
     if not rotations:
-        matches = index.query(s_type.hash_from_file(path))
+        hash = s_type.hash_from_file(path)
+        if not hash:
+            # e.g. a photo below the PDQ quality threshold has no hash to match
+            return []
+        matches = index.query(hash)
         return [_IndexMatchWithRotation(match=match) for match in matches]
 
     # Handle rotations for photos
@@ -284,7 +288,10 @@ def _match_file(
         with tempfile.NamedTemporaryFile() as temp_file:
             temp_file.write(rotated_bytes)
             temp_file_path = pathlib.Path(temp_file.name)
-            matches = index.query(s_type.hash_from_file(temp_file_path))
+            hash = s_type.hash_from_file(temp_file_path)
+            if not hash:
+                continue
+            matches = index.query(hash)
 
         # Add rotation information if any matches were found
         matches_with_rotations = []
