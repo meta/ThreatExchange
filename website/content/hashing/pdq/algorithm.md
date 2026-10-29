@@ -24,6 +24,6 @@ As a starting point, the project recommends:
 
 These are starting points, not universal guarantees. PDQ is intended for similarity detection, not cryptographic integrity, authentication, or proof that two files are identical.
 
-PDQ implementations are available in C++, PHP, Python, Java, and WebAssembly. See the [implementation guide](./implementations) and the [PDQ reference implementations](https://github.com/facebook/ThreatExchange/tree/main/pdq).
+PDQ implementations are available in C++, PHP, Python, Java, and WebAssembly. See the [implementation guide](./implementations) and the [PDQ reference implementations](https://github.com/meta/ThreatExchange/tree/main/pdq).
 
-For a detailed description of the algorithm, see the [PDQ hashing paper](https://github.com/facebook/ThreatExchange/blob/main/hashing/hashing.pdf).
+For a detailed description of the algorithm, see the [PDQ hashing paper](https://github.com/meta/ThreatExchange/blob/main/hashing/hashing.pdf).

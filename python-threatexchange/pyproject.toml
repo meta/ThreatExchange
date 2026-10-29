@@ -36,7 +36,7 @@ dependencies = [
     "numpy",  # faiss
     "packaging",  # fix ModuleNotFoundError in faiss/loader.py
 ]
-urls = {Homepage = "https://www.github.com/facebook/ThreatExchange"}
+urls = {Homepage = "https://www.github.com/meta/ThreatExchange"}
 
 [project.optional-dependencies]
 extensions = [

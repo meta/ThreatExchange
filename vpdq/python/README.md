@@ -3,7 +3,7 @@ This is a Python binding library to the vPDQ (video PDQ) hashing algorithm by Me
 
 It is written in Cython.
 
-Development is hosted on [GitHub](https://github.com/facebook/ThreatExchange/tree/main/vpdq).
+Development is hosted on [GitHub](https://github.com/meta/ThreatExchange/tree/main/vpdq).
 
 Windows is currently not supported by the Cython bindings.
 

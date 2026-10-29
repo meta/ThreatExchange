@@ -201,7 +201,7 @@ def test_recover_from_index_unlink_partial_failure(storage: DefaultOMMStore):
     SignalTypeIndex is stored in the postgres large object
     As part of swapping over to the new index, we need to unlink the old
     interface, but there is a race here because unlinking may not happen
-    in a transaction. See github.com/facebook/ThreatExchange/issues/1673
+    in a transaction. See github.com/meta/ThreatExchange/issues/1673
     """
     bank_cfg = BankConfig("TEST", matching_enabled_ratio=1.0)
     storage.bank_update(bank_cfg, create=True)

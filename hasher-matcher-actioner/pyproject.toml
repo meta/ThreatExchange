@@ -60,5 +60,5 @@ module = "flask_apscheduler.*,importlib_metadata.*"
 ignore_missing_imports = true
 
 [project.urls]
-"Homepage" = "https://github.com/facebook/ThreatExchange/"
-"Bug Tracker" = "https://github.com/facebook/ThreatExchange/issues"
+"Homepage" = "https://github.com/meta/ThreatExchange/"
+"Bug Tracker" = "https://github.com/meta/ThreatExchange/issues"

@@ -8,7 +8,7 @@ prev:
 
 # Implementations
 
-There are reference implementations for the PDQ perceptual hashing algorithm is written in [C++](https://github.com/facebook/ThreatExchange/tree/main/pdq/cpp), [PHP](https://github.com/facebook/ThreatExchange/tree/main/pdq/php), [Python](https://github.com/facebook/ThreatExchange/tree/main/pdq/python), [Java](https://github.com/facebook/ThreatExchange/tree/main/pdq/java), and [WASM](https://github.com/facebook/ThreatExchange/tree/main/pdq/wasm).
+There are reference implementations for the PDQ perceptual hashing algorithm is written in [C++](https://github.com/meta/ThreatExchange/tree/main/pdq/cpp), [PHP](https://github.com/meta/ThreatExchange/tree/main/pdq/php), [Python](https://github.com/meta/ThreatExchange/tree/main/pdq/python), [Java](https://github.com/meta/ThreatExchange/tree/main/pdq/java), and [WASM](https://github.com/meta/ThreatExchange/tree/main/pdq/wasm).
 
 ## Community Implementations
 

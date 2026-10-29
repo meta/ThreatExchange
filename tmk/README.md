@@ -3,7 +3,7 @@
 TMK (for _Temporal Match Kernel_) is a video-similarity-detection algorithm
 produced in conjunction with Facebook AI Research ('FAIR').
 
-- Full details are located in the [hashing.pdf](https://github.com/facebook/ThreatExchange/blob/main/hashing/hashing.pdf) document.
+- Full details are located in the [hashing.pdf](https://github.com/meta/ThreatExchange/blob/main/hashing/hashing.pdf) document.
 
 - See https://newsroom.fb.com/news/2019/08/open-source-photo-video-matching for context.
 
@@ -11,7 +11,7 @@ produced in conjunction with Facebook AI Research ('FAIR').
   https://github.com/facebookresearch/videoalignment for a research version of
   TMK, with different parameter-weighting than presented here.
 
-- The Tech Coalition evaluated TMK+PDQF as part of their [Benchmark-based Analysis of Perceptual Hash Systems for Video](https://www.technologycoalition.org/knowledge-hub/phvspec-a-benchmark-based-analysis-of-perceptual-hash-systems-for-videos), where you can compare it's performance characteristics against other video detection systems, and [vPDQ](https://github.com/facebook/ThreatExchange/tree/main/vpdq), which is also in this library.
+- The Tech Coalition evaluated TMK+PDQF as part of their [Benchmark-based Analysis of Perceptual Hash Systems for Video](https://www.technologycoalition.org/knowledge-hub/phvspec-a-benchmark-based-analysis-of-perceptual-hash-systems-for-videos), where you can compare it's performance characteristics against other video detection systems, and [vPDQ](https://github.com/meta/ThreatExchange/tree/main/vpdq), which is also in this library.
 
 - TMK+PDQF was targeted for a specific performance niche that has been mostly unexplored by other perceptual video algorithms. Make sure you understand the tradeoffs vs other algorithms.
   - TMK focused on ease-of-indexing, with fixed length hashes, aiming to find a simple video perceptual hash that could replace the use cryptographic file hashes to find identical videos.
@@ -250,7 +250,7 @@ OK, now that we've sanity-checked a few sample videos from the repo, now let's
 broaden our scope. Here we can look at shared hashes -- no videos, only hashes
 -- which are delivered separately depending on with whom you're sharing hashes.
 (See
-https://github.com/facebook/ThreatExchange/blob/main/hashing/te-tag-query-java/README.md
+https://github.com/meta/ThreatExchange/blob/main/hashing/te-tag-query-java/README.md
 for example.) Then you can compute hashes of some of your own videos. Then,
 look to see what (if anything) is in common.
 
@@ -307,7 +307,7 @@ $ tmk-query --c1 0.7 --c2 0.7 needles.txt haystack.txt | sort -n
 1.000000 1.000000 chair-orig-22-hd-no-bar.tmk chair-orig-22-hd-no-bar.tmk
 ```
 
-There is another query tool called `tmk-query-with-faiss` which is more efficient than `tmk-query` and uses [faiss](https://github.com/facebookresearch/faiss) for running queries efficiently. See [README-more.md](https://github.com/facebook/ThreatExchange/blob/main/hashing/tmk/README-more.md)
+There is another query tool called `tmk-query-with-faiss` which is more efficient than `tmk-query` and uses [faiss](https://github.com/facebookresearch/faiss) for running queries efficiently. See [README-more.md](https://github.com/meta/ThreatExchange/blob/main/hashing/tmk/README-more.md)
 
 ## Look for duplicates within your own hashes
 
@@ -325,7 +325,7 @@ $ find /path/to/shared/hashes -name '*.tmk' | tmk-clusterize --min 2 -i
 ```
 
 This concludes the walkthrough. Please see
-[README-more.md](https://github.com/facebook/ThreatExchange/blob/main/hashing/tmk/README-more.md)
+[README-more.md](https://github.com/meta/ThreatExchange/blob/main/hashing/tmk/README-more.md)
 for more detailed reference information.
 
 # Some scoring data

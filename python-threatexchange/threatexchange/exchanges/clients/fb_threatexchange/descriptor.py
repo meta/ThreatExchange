@@ -190,7 +190,7 @@ class SimpleDescriptorRollup:
     ) -> t.Optional["SimpleDescriptorRollup"]:
         if te_json["should_delete"]:
             return None
-        # https://github.com/facebook/ThreatExchange/issues/834
+        # https://github.com/meta/ThreatExchange/issues/834
         if not te_json.get("descriptors", {}).get("data"):
             return None
         descriptors = []

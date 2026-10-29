@@ -73,12 +73,12 @@ export default defineConfig({
     },
 
     socialLinks: [
-      { icon: "github", link: "https://github.com/facebook/threatexchange" },
+      { icon: "github", link: "https://github.com/meta/threatexchange" },
     ],
 
     footer: {
       message:
-        'Released under the <a href="https://github.com/facebook/ThreatExchange/blob/main/LICENSE">BSD License</a>. | <a href="https://opensource.facebook.com/legal/terms">Terms of Use</a> | <a href="https://opensource.facebook.com/legal/privacy">Privacy Policy</a>',
+        'Released under the <a href="https://github.com/meta/ThreatExchange/blob/main/LICENSE">BSD License</a>. | <a href="https://opensource.facebook.com/legal/terms">Terms of Use</a> | <a href="https://opensource.facebook.com/legal/privacy">Privacy Policy</a>',
       copyright: "Copyright (c) Meta Platforms, Inc. and affiliates.",
     },
 

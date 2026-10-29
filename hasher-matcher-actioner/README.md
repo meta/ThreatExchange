@@ -1,6 +1,6 @@
 # Hasher Matcher Actioner (HMA)
 
-_Note: HMA has just completed a rewrite! It is now an entirely new architecture. You can [read our motivations below](../website/content/hma/history.md). If you need the HMA 1.0 code (Terraform, AWS, node), it lives forever with a copy of its wiki at [HMA_1.0_archive](https://github.com/facebook/ThreatExchange/tree/HMA_1.0_archive/hasher-matcher-actioner)_
+_Note: HMA has just completed a rewrite! It is now an entirely new architecture. You can [read our motivations below](../website/content/hma/history.md). If you need the HMA 1.0 code (Terraform, AWS, node), it lives forever with a copy of its wiki at [HMA_1.0_archive](https://github.com/meta/ThreatExchange/tree/HMA_1.0_archive/hasher-matcher-actioner)_
 
 # Project Introduction
 
@@ -23,12 +23,12 @@ We have documentation on the following aspects of the HMA project:
 - [Project History](../website/content/hma/history.md)
 - [User Interface](../website/content/hma/user-interface.md)
 - [API](../website/content/hma/api.md) (work in progress)
-- [Releases](https://github.com/facebook/ThreatExchange/releases) — what's changed in each release
+- [Releases](https://github.com/meta/ThreatExchange/releases) — what's changed in each release
 - [Releasing](../website/content/hma/releasing.md) — how to cut a release and subscribe to notifications
 
 ## Configurability
 
-There is no one-size-fits all solution to make platforms safe, and even in the narrow scope of hashing and matching technology, there are many possible solutions. HMA is designed to be highly configurable, such that new algorithms, hash exchanges, or other capabilities could be integrated later. If you want to use a custom or proprietary hashing algorithm with HMA, you simple need to follow the interfaces defined in [python-threatexchange ](../python-threatexchange) to add new capabilities. A full list of known available algorithms and compatible exchanges can be found at [the python-threatexchange/extensions README](https://github.com/facebook/ThreatExchange/tree/main/python-threatexchange/threatexchange/extensions/README.md).
+There is no one-size-fits all solution to make platforms safe, and even in the narrow scope of hashing and matching technology, there are many possible solutions. HMA is designed to be highly configurable, such that new algorithms, hash exchanges, or other capabilities could be integrated later. If you want to use a custom or proprietary hashing algorithm with HMA, you simple need to follow the interfaces defined in [python-threatexchange ](../python-threatexchange) to add new capabilities. A full list of known available algorithms and compatible exchanges can be found at [the python-threatexchange/extensions README](https://github.com/meta/ThreatExchange/tree/main/python-threatexchange/threatexchange/extensions/README.md).
 
 You can find an example on expanding the base image to include the Clip tx extension [here](https://github.com/juanmrad/HMA-CLIP-demo)
 
@@ -36,7 +36,7 @@ You can find an example on expanding the base image to include the Clip tx exten
 
 HMA can be used as a library, or in any deployment setup that can use docker. It uses a simple REST API to make it as simple as possible to include in your existing environment. You'll need an engineer familiar with your platform's architecture to figure out the best way to deploy it in your ecosystem. At it's simplest, HMA can be run on a single machine, which is enough for evaluation purposes. At scale, HMA is designed with horizontal scalability in mind, and you can increase throughput by increasing the number of instances.
 
-If you are interested in using HMA for your platform, but find it's missing something for your usecase, [this issue](https://github.com/facebook/ThreatExchange/issues/1440) is currently the best place to make requests!
+If you are interested in using HMA for your platform, but find it's missing something for your usecase, [this issue](https://github.com/meta/ThreatExchange/issues/1440) is currently the best place to make requests!
 
 ### Docker
 
@@ -62,7 +62,7 @@ HMA requires a configuration file passed as an environment variable, `OMM_CONFIG
 HMA requires configuration for the database connection to postgresql, if you're not using the `docker-compose` approach described above, you will need to set the database URI for HMA to connect to. For the docker commands below, you may need to specify the network on which the postgresql database is available, in which case the commands may look something like the following:
 
 ```sh
-docker run --rm --net development_default -p 5100:5100 -e OMM_CONFIG="/reference_configs/development_omm_config.py" -e OMM_DATABASE_URI="postgresql://postgres:@postgresql/hma" ghcr.io/facebook/threatexchange/hma /app/scripts/db-migrate.sh
+docker run --rm --net development_default -p 5100:5100 -e OMM_CONFIG="/reference_configs/development_omm_config.py" -e OMM_DATABASE_URI="postgresql://postgres:@postgresql/hma" ghcr.io/meta/threatexchange/hma /app/scripts/db-migrate.sh
 ```
 
 #### Running the Application in Development
@@ -70,14 +70,14 @@ docker run --rm --net development_default -p 5100:5100 -e OMM_CONFIG="/reference
 To run HMA in a development environment using Docker, we first need to run the database migrations:
 
 ```bash
-$ docker run --rm -e OMM_CONFIG='/reference_configs/development_omm_config.py' ghcr.io/facebook/threatexchange/hma /app/scripts/db-migrate.sh
+$ docker run --rm -e OMM_CONFIG='/reference_configs/development_omm_config.py' ghcr.io/meta/threatexchange/hma /app/scripts/db-migrate.sh
 ```
 
 
 Then we can start the server with:
 
 ```bash
-$ docker run --rm -e OMM_CONFIG='/reference_configs/development_omm_config.py' -p 5100:5100 ghcr.io/facebook/threatexchange/hma
+$ docker run --rm -e OMM_CONFIG='/reference_configs/development_omm_config.py' -p 5100:5100 ghcr.io/meta/threatexchange/hma
 ```
 
 This command sets the necessary environment variable and exposes the app on port 5100 of your host machine, making the API accessible locally.
@@ -86,10 +86,10 @@ This command sets the necessary environment variable and exposes the app on port
 
 For production environments, you'll usually end up with specific configuration for your environment, for instance, only running certain roles (curator, hasher, matcher) or including specific signal types or exchanges. You should ensure that only a single instance of the curator role is active at any time to manage the indexing and download of hash bank data effectively.
 
-The `ghcr.io/facebook/threatexchange/hma` uses Gunicorn by default, if we had our own configuration file in a `config` directory named `config/production.py`, in docker we can use that as follows:
+The `ghcr.io/meta/threatexchange/hma` uses Gunicorn by default, if we had our own configuration file in a `config` directory named `config/production.py`, in docker we can use that as follows:
 
 ```bash
-$ docker run --rm -v 'config:/config:ro' -e OMM_CONFIG='/config/production.py' -p 5100:5100 ghcr.io/facebook/threatexchange/hma"
+$ docker run --rm -v 'config:/config:ro' -e OMM_CONFIG='/config/production.py' -p 5100:5100 ghcr.io/meta/threatexchange/hma"
 ```
 
 #### Notes:

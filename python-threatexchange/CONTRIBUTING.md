@@ -148,7 +148,7 @@ A way to verify your development environment is to make a small change in the co
 
 For this exercise, we are going to make a small change to the default text matching system, so that the text "hello world" will trigger as a match with the example dataset.
 
-Once you have your copy of the code, we're going to head over to [RawTextSignal](https://github.com/facebook/ThreatExchange/blob/main/python-threatexchange/threatexchange/signal_type/raw_text.py#L98), specifically it's list of sample signals. What you are seeing in this file:
+Once you have your copy of the code, we're going to head over to [RawTextSignal](https://github.com/meta/ThreatExchange/blob/main/python-threatexchange/threatexchange/signal_type/raw_text.py#L98), specifically it's list of sample signals. What you are seeing in this file:
 * python-threatexchange has interfaces for the core concepts of signal exchange. One of these interfaces is "Signal", or a signature of content that can be serialized into a string and shared.
 * RawTextSignal represents simple human-readable unicode text
   * Another interface, called ContentType tells python-threatexchange how to pair signals with inputs, such as text files
@@ -196,7 +196,7 @@ rm -r ~/.threatexchange
 ```
 
 #### None of the above worked!
-You can [open an issue](https://github.com/facebook/ThreatExchange/issues) to help us update the docs here if you ran into something that isn't covered. In the issue please list:
+You can [open an issue](https://github.com/meta/ThreatExchange/issues) to help us update the docs here if you ran into something that isn't covered. In the issue please list:
 1. Your operating system / terminal environment (e.g. bash, tmux, windows powershell)
 2. The commands ran, and the full output of any errors you are seeing
 3. (For code issues) `git diff` can be used to demonstrate the local changes you made

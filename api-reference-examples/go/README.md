@@ -3,7 +3,7 @@
 A golang library to interface with Facebook ThreatExchange API. This is still very much in development so feel free to contribute :)
 
 ## Installation
-`go get github.com/facebook/ThreatExchange/api-reference-examples/go/threatexchange`
+`go get github.com/meta/ThreatExchange/api-reference-examples/go/threatexchange`
 
 ## Usage
 

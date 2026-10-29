@@ -41,7 +41,7 @@ setup(
         "Programming Language :: Python :: 2.7",
     ],
     keywords="facebook threatexchange",
-    url="https://www.github.com/facebook/ThreatExchange",
+    url="https://www.github.com/meta/ThreatExchange",
     packages=find_packages(exclude=["docs", "tests"]),
     install_requires=install_requires,
     scripts=["scripts/get_data.py", "scripts/post_data.py"],

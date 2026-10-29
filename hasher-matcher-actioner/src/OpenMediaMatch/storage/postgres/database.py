@@ -468,7 +468,7 @@ class SignalIndex(db.Model):  # type: ignore[name-defined]
         Return true if the index lobj exists and load_signal_index should work.
 
         In normal operation, this should always return true. However,
-        we've observed in github.com/facebook/ThreatExchange/issues/1673
+        we've observed in github.com/meta/ThreatExchange/issues/1673
         that some partial failure is possible. This can be used to
         detect that condition.
 

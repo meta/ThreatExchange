@@ -85,9 +85,9 @@ The StaticSampleSignalExchangeAPI is essentially a hardcoded data source that:
 * Provides metadata and signal data that the system can index and match against  
 * Requires no external network calls or authentication
 
-More information is in [StaticSample](https://github.com/facebook/ThreatExchange/blob/main/python-threatexchange/threatexchange/exchanges/impl/static_sample.py#L3-L9)
+More information is in [StaticSample](https://github.com/meta/ThreatExchange/blob/main/python-threatexchange/threatexchange/exchanges/impl/static_sample.py#L3-L9)
 
-And inline in the various signal types: [https://github.com/facebook/ThreatExchange/blob/main/python-threatexchange/threatexchange/signal\_type/pdq/signal.py\#L93-L114](https://github.com/facebook/ThreatExchange/blob/main/python-threatexchange/threatexchange/signal_type/pdq/signal.py#L93-L114)
+And inline in the various signal types: [https://github.com/meta/ThreatExchange/blob/main/python-threatexchange/threatexchange/signal\_type/pdq/signal.py\#L93-L114](https://github.com/meta/ThreatExchange/blob/main/python-threatexchange/threatexchange/signal_type/pdq/signal.py#L93-L114)
 
 Different SignalTypes might use different sources of samples.
 
@@ -247,12 +247,12 @@ curl http://localhost:5000/c/bank/SEED_BANK_0/content/1
 
 ## **Exchanges (`/ui/exchanges`)**
 
-The Exchanges page lets users configure external hash exchanges that are API based. Some might requrie authentication and additional configuration. All exchanges support automatic periodic synchronization to keep the bank fresh; imported data goes into dedicated banks. Exchanges can be added to HMA by [adding an extension](https://github.com/facebook/ThreatExchange/tree/main/python-threatexchange/threatexchange/extensions)
+The Exchanges page lets users configure external hash exchanges that are API based. Some might requrie authentication and additional configuration. All exchanges support automatic periodic synchronization to keep the bank fresh; imported data goes into dedicated banks. Exchanges can be added to HMA by [adding an extension](https://github.com/meta/ThreatExchange/tree/main/python-threatexchange/threatexchange/extensions)
 
 
 
 
-### [Default Hash Exchanges](https://github.com/facebook/ThreatExchange/tree/main/python-threatexchange/threatexchange/extensions)
+### [Default Hash Exchanges](https://github.com/meta/ThreatExchange/tree/main/python-threatexchange/threatexchange/extensions)
 
 **NCMEC (National Center for Missing & Exploited Children)**
 
@@ -280,7 +280,7 @@ The Exchanges page lets users configure external hash exchanges that are API bas
 ### Exchange Configuration
 ![Exchange configuration](./images/exchange-configuration.webp)
 
-Several of the hash exchanges supported require credentials, provided in the form of a JSON blob. The JSON represents the [CollabConfig](https://github.com/facebook/ThreatExchange/blob/main/python-threatexchange/threatexchange/exchanges/collab_config.py#L12) for the exchange. The keys and data types must match the structure data. For example, here's the [exchange config for NMCEC](https://github.com/facebook/ThreatExchange/blob/main/python-threatexchange/threatexchange/exchanges/impl/ncmec_api.py#L101-L119). Using it as an example, it has two fields: 
+Several of the hash exchanges supported require credentials, provided in the form of a JSON blob. The JSON represents the [CollabConfig](https://github.com/meta/ThreatExchange/blob/main/python-threatexchange/threatexchange/exchanges/collab_config.py#L12) for the exchange. The keys and data types must match the structure data. For example, here's the [exchange config for NMCEC](https://github.com/meta/ThreatExchange/blob/main/python-threatexchange/threatexchange/exchanges/impl/ncmec_api.py#L101-L119). Using it as an example, it has two fields: 
 
 * \[Required\] A field named environment which is a string enum for the API endpoint   
 * An optional field only\_esp\_ids, which accepts a container of ints. So one valid json blob would be

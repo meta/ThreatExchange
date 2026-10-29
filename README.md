@@ -16,9 +16,9 @@ Video PDQ (or vPDQ for short) is a simple video hashing algorithm that determine
 
 ## Hasher-Matcher-Actioner (HMA) Trust & Safety Platform
 
-HMA is a ready-to-deploy content moderation project for AWS, containing many submodules. It allows you to maintain lists of known content to scan for, which you can either curate yourself or connect to other hash exchange programs to share and receive lists.  More can be found [at the wiki](https://github.com/facebook/ThreatExchange/wiki).
+HMA is a ready-to-deploy content moderation project for AWS, containing many submodules. It allows you to maintain lists of known content to scan for, which you can either curate yourself or connect to other hash exchange programs to share and receive lists.  More can be found [at the wiki](https://github.com/meta/ThreatExchange/wiki).
 
-A second version of this project, called "[Open Media Match](https://github.com/facebook/ThreatExchange/tree/main/open-media-match)" is under construction, which uses a cloud-agnostic docker-based deployment.
+A second version of this project, called "[Open Media Match](https://github.com/meta/ThreatExchange/tree/main/open-media-match)" is under construction, which uses a cloud-agnostic docker-based deployment.
 
 ## python-threatexchange
 
@@ -36,7 +36,7 @@ For full details on ThreatExchange and best practices are available in the Threa
 
 ## Get All Available Data
 
-For tag-driven workloads, supporting either bulk download or incremental updates, our currently recommended best practice is a [Java reference design](https://github.com/facebook/ThreatExchange/blob/main/api-reference-examples/java/te-tag-query/README.md).
+For tag-driven workloads, supporting either bulk download or incremental updates, our currently recommended best practice is a [Java reference design](https://github.com/meta/ThreatExchange/blob/main/api-reference-examples/java/te-tag-query/README.md).
 
 You can also explore the dataset using the hosted [ThreatExchange UI](https://developers.facebook.com/docs/threat-exchange/ui)
 
@@ -47,7 +47,7 @@ To request access to ThreatExchange, please submit an application via [https://d
 # Other Information about this Repository
 ## Contributing
 
-We welcome contributions! See [CONTRIBUTING](https://github.com/facebook/ThreatExchange/blob/main/CONTRIBUTING.md) for details on how to get started, and our [Code of Conduct](https://github.com/facebook/ThreatExchange/blob/main/CODE_OF_CONDUCT.md).
+We welcome contributions! See [CONTRIBUTING](https://github.com/meta/ThreatExchange/blob/main/CONTRIBUTING.md) for details on how to get started, and our [Code of Conduct](https://github.com/meta/ThreatExchange/blob/main/CODE_OF_CONDUCT.md).
 
 ## Legal
 
@@ -55,7 +55,7 @@ We welcome contributions! See [CONTRIBUTING](https://github.com/facebook/ThreatE
 
 ## License
 
-All projects in this repository are under the BSD license - see [./LICENSE](https://github.com/facebook/ThreatExchange/blob/main/LICENSE). However, there are some exceptions for files that were included for demonstration purposes, and their alternative licenses are noted at the top of the files themselves.
+All projects in this repository are under the BSD license - see [./LICENSE](https://github.com/meta/ThreatExchange/blob/main/LICENSE). However, there are some exceptions for files that were included for demonstration purposes, and their alternative licenses are noted at the top of the files themselves.
 
 As of 12/9/2021, this is the complete list of exceptions:
 * pdq/cpp/CImg.h
