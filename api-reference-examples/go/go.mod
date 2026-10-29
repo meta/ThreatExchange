@@ -1,4 +1,4 @@
-module github.com/facebook/ThreatExchange/api-reference-examples/go
+module github.com/meta/ThreatExchange/api-reference-examples/go
 
 go 1.21
 

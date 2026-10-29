@@ -1,7 +1,7 @@
 # Summary
 
 vPDQ (Video PDQ) is a video-similarity-detection algorithm, which uses the PDQ image similarity algorithm on video frames to measure the similarity of videos.
-Full details of PDQ are located in the [hashing.pdf](https://github.com/facebook/ThreatExchange/blob/main/hashing/hashing.pdf) document.
+Full details of PDQ are located in the [hashing.pdf](https://github.com/meta/ThreatExchange/blob/main/hashing/hashing.pdf) document.
 It allows for matching individual frames against known bad images, as well as which segments of a video are matching.
 
 See [CPP implementation](#cpp-implementation) for how to install and use vpdq.

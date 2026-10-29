@@ -11,13 +11,13 @@ Facebook has a [bounty program](https://www.facebook.com/whitehat/) for the safe
 disclosure of security bugs. In those cases, please go through the process
 outlined on that page and do not file a public issue.
 
-# Contributing to facebook/ThreatExchange
+# Contributing to meta/ThreatExchange
 ## Get the code, Set up a fork
 We prefer people use forks to develop on this repo, and do not accept development branches.
 
 Here's an easy way to get started:
 
-[Clone](https://help.github.com/articles/which-remote-url-should-i-use/) facebook/ThreatExchange.
+[Clone](https://help.github.com/articles/which-remote-url-should-i-use/) meta/ThreatExchange.
 
    git clone git@github.com:your-username/ThreatExchange
 

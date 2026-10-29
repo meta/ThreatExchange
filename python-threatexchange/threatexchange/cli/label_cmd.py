@@ -22,7 +22,7 @@ class LabelCommand(command_base.Command):
     [WIP] Label signals and content for sharing.
 
     Warning! This command is still under construction, and is not yet stable.
-    Please open an issue at https://github.com/facebook/ThreatExchange/issues
+    Please open an issue at https://github.com/meta/ThreatExchange/issues
     if you need the development team to prioritize stabilitizing it.
 
     There are three main types of labeling:

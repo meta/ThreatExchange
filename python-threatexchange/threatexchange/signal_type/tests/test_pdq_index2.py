@@ -162,7 +162,7 @@ def test_one_entry_sample_index():
     """
     Test how the index handles when it only has one entry.
 
-    See issue github.com/facebook/ThreatExchange/issues/1318
+    See issue github.com/meta/ThreatExchange/issues/1318
     """
     get_random_hashes = _get_hash_generator()
     base_hashes = get_random_hashes(100)

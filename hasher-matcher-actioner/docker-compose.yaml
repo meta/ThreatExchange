@@ -30,7 +30,7 @@ services:
       - backend
 
   migrations:
-    image: ghcr.io/facebook/threatexchange/hma:latest
+    image: ghcr.io/meta/threatexchange/hma:latest
     build: .
     restart: no
     environment:
@@ -43,7 +43,7 @@ services:
     command: /app/scripts/db-migrate.sh
 
   app:
-    image: ghcr.io/facebook/threatexchange/hma:latest
+    image: ghcr.io/meta/threatexchange/hma:latest
     build: .
     restart: unless-stopped
     ports:

@@ -11,11 +11,11 @@
    - A git tag `hma-v1.1.3` is created
    - A GitHub Release titled "HMA 1.1.3" is published, with release notes auto-generated from PRs merged since the previous release
 
-4. Monitor the [release workflow](https://github.com/facebook/ThreatExchange/actions/workflows/hma-release.yaml) to confirm the build succeeds.
+4. Monitor the [release workflow](https://github.com/meta/ThreatExchange/actions/workflows/hma-release.yaml) to confirm the build succeeds.
 
 5. Test the new image locally by pulling the versioned tag:
    ```bash
-   docker pull ghcr.io/facebook/threatexchange/hma:1.1.3
+   docker pull ghcr.io/meta/threatexchange/hma:1.1.3
    ```
 
 **Notes:**
@@ -27,5 +27,5 @@
 To get notified when a new HMA release is published:
 
 - **GitHub**: Watch this repo → Custom → check **Releases**
-- **Slack**: Use the GitHub app — `/github subscribe facebook/ThreatExchange releases`
-- **RSS**: Subscribe to `https://github.com/facebook/ThreatExchange/releases.atom`
+- **Slack**: Use the GitHub app — `/github subscribe meta/ThreatExchange releases`
+- **RSS**: Subscribe to `https://github.com/meta/ThreatExchange/releases.atom`

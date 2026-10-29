@@ -44,7 +44,7 @@ class VPDQSignal(signal_base.SimpleSignalType, signal_base.FileHasher):
             },
             ...
     }
-    Read about VPDQ at https://github.com/facebook/ThreatExchange/tree/main/vpdq
+    Read about VPDQ at https://github.com/meta/ThreatExchange/tree/main/vpdq
     """
 
     @classmethod

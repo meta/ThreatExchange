@@ -12,13 +12,13 @@ hardcoding those things rather than fully implementing the interface.
 There's an earlier attempt at these interfaces used for CLI at
 <@Mackay-Fisher add the right pointer to the CLI storage>.
 During the development of Hasher-Matcher-Actioner 2.0
-(github.com/facebook/ThreatExchange/tree/main/hasher-matcher-actioner/)
+(github.com/meta/ThreatExchange/tree/main/hasher-matcher-actioner/)
 we realized that the original attempt at this wouldn't meet the needs
 of that code and wrote a new interface.
 
 As of 12/2024, we are now migrating that interface from HMA into pytx
 proper as part of a migration to dbm
-(github.com/facebook/ThreatExchange/issues/1687). The general approach is:
+(github.com/meta/ThreatExchange/issues/1687). The general approach is:
 1. Copy the interface unchanged from HMA to pytx
 2. Release a new version of pytx
 3. Delete the copy in HMA and update all references to the pytx version

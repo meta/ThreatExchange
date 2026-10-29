@@ -1,6 +1,6 @@
 # History: HMA 1.0 (AWS HMA) -> HMA 2.0 (Open Media Match):
 
-In March of 2024, [we archived](https://github.com/facebook/ThreatExchange/tree/HMA_1.0_archive/hasher-matcher-actioner) the original version of HMA, and replaced it with a full rewrite, which is what you'll find here. Below you can find our reasoning for doing so.
+In March of 2024, [we archived](https://github.com/meta/ThreatExchange/tree/HMA_1.0_archive/hasher-matcher-actioner) the original version of HMA, and replaced it with a full rewrite, which is what you'll find here. Below you can find our reasoning for doing so.
 
 ## Predecessor project: Hasher-Matcher-Actioner 1.0
 
@@ -43,4 +43,4 @@ Hasher-Matcher-Actioner includes a GUI tool for interacting with the matching se
 
 Python-ThreatExchange was envisioned as a compatibility layer for trust and safety teams, academics, and open source contributors to make sharing improvements easier. However, to deploy and use these systems are either too tightly bound with HMA (AWS) or the CLI, and so make selective and compositional use of the library difficult. The design of HMA 2.0 will aim to standardize the core HMA steps (Fetching, Storing, Indexing, Hashing, Matching, Recording review results) in a way that makes them easier to partially adopt.
 
-See [#1247](https://github.com/facebook/ThreatExchange/issues/1247) for more detail.
+See [#1247](https://github.com/meta/ThreatExchange/issues/1247) for more detail.

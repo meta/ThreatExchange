@@ -6,8 +6,8 @@ pytx (pie-tex) is a Python Library for interfacing with Facebook's ThreatExchang
 Build Status
 ------------
 
-.. image:: https://travis-ci.org/facebook/ThreatExchange.svg
-    :target: https://travis-ci.org/facebook/ThreatExchange
+.. image:: https://travis-ci.org/meta/ThreatExchange.svg
+    :target: https://travis-ci.org/meta/ThreatExchange
 
 .. image:: https://img.shields.io/pypi/dm/pytx.svg
     :target: https://pypi.python.org/pypi/pytx/
@@ -65,8 +65,8 @@ See Also
 
 We now offer tag-based, descriptor-focused reference designs in
 
-* **Python**: <https://github.com/facebook/ThreatExchange/blob/main/hashing/te-tag-query-python>
-* **Ruby**: <https://github.com/facebook/ThreatExchange/blob/main/hashing/te-tag-query-ruby>
-* **Java**: <https://github.com/facebook/ThreatExchange/blob/main/hashing/te-tag-query-java>
+* **Python**: <https://github.com/meta/ThreatExchange/blob/main/hashing/te-tag-query-python>
+* **Ruby**: <https://github.com/meta/ThreatExchange/blob/main/hashing/te-tag-query-ruby>
+* **Java**: <https://github.com/meta/ThreatExchange/blob/main/hashing/te-tag-query-java>
 
 The common context to all these is that since early 2018 ThreatExchange has moved beyond malware/phishing into cross-company integrity-signal sharing. This newer tooling largely overlaps the old (such as pytx), but with an added focus on more interactive tooling for a broader, more diverse userbase; a strong threat-descriptor focus (vs malware analyses); and enhanced support for cross-company feedback mechanisms.
