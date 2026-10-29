@@ -1,6 +1,6 @@
-# Contributing to Open Media Match
+# Contributing to Hasher Matcher Actioner
 
-Thanks for your interest in contributing to Open Media Match! Contributions from the community are essential to the success of this project, and we aim to make it as easy as possible for anyone to hack on Open Media Match and contribute code back.
+Thanks for your interest in contributing to Hasher Matcher Actioner! Contributions from the community are essential to the success of this project, and we aim to make it as easy as possible for anyone to hack on Hasher Matcher Actioner and contribute code back.
 
 If your developer onboarding experience is anything less than awesome, please file a GitHub issue with as much relevant information as possible.
 
@@ -9,7 +9,7 @@ To contribute, you will need, at the minimum:
  * A development machine (e.g., your laptop)
  * A basic understanding of the Python language
 
-Open Media Match is written in Python, uses [Flask](https://flask.palletsprojects.com/), and presents a REST API over HTTP. Familiarity with these core technologies will be advantageous.
+Hasher Matcher Actioner is written in Python, uses [Flask](https://flask.palletsprojects.com/), and presents a REST API over HTTP. Familiarity with these core technologies will be advantageous.
 
 Please see CONTRIBUTING in the repo root for more general guidelines on how to contribute by developing locally and submitting pull requests on GitHub.
 
@@ -20,7 +20,7 @@ See [releasing.md](../website/content/hma/releasing.md) for the full release pro
 
 # Developer onboarding and environment setup
 
-There are a few different ways you can set up a development instance of Open Media Match and get to work.
+There are a few different ways you can set up a development instance of Hasher Matcher Actioner and get to work.
 
 ## Visual Studio Code with a Dev Container (recommended)
 
@@ -46,11 +46,11 @@ The [Dev Containers](https://code.visualstudio.com/docs/devcontainers/containers
 ### Get started
  * Clone this Git repository locally. If you are a non-Windows OS, you can do this through the CLI or through the "Clone Git Repository..." shortcut on the VS Code welcome screen.
    * [Windows] You'll have to do a trick to get the correct line endings for your devcontainer on checkout. The instructions for that can be found in the [hasher-matcher-actioner 1.0 CONTRIBUTING](https://github.com/facebook/ThreatExchange/blob/HMA_1.0_archive/hasher-matcher-actioner/CONTRIBUTING.md#vs-code-devcontainers--automated-development-environment).
- * Open the `open-media-match` folder in VSCode
+ * Open the `hasher-matcher-actioner` folder in VSCode
  * VSCode should ask you if you want to reopen the folder in a Dev Container. Select "Reopen in Container".
  * Wait for the container to build
 
-The VSCode window should now be replaced with a new one with `open-media-match` as the project root.
+The VSCode window should now be replaced with a new one with `hasher-matcher-actioner` as the project root.
 
 You should also see a Terminal panel within VSCode containing `Serving Flask app 'OpenMediaMatch'` and some other startup/initialization messages from Flask. This shows that the Flask server is up and running.
 
@@ -74,7 +74,7 @@ Retry the `curl localhost:5000/hello`, you should now see your greeting message 
 
 ## Self-managed Python dev environment
 
-If you're a seasoned Python developer and have your dev environment set up just-so, you should have no problem hacking on Open Media Match, as the project is laid out in standard Python Package format.
+If you're a seasoned Python developer and have your dev environment set up just-so, you should have no problem hacking on Hasher Matcher Actioner, as the project is laid out in standard Python Package format.
 
 # How do I ...
 
