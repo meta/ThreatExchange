@@ -1,0 +1,25 @@
+hasher-matcher-actioner/src/OpenMediaMatch/storage/postgres/impl.py
+  s_1d2b0bb0adc91d::t_25aa377366d3c5 765-771
+  s_1d2b0bb0adc91d::t_3985ab0e909dfa 618,621
+  s_1d2b0bb0adc91d::t_872f5e89b9f52e 735-736,738-743
+hasher-matcher-actioner/src/OpenMediaMatch/tests/test_postgres_storage_impl.py
+  s_1d2b0bb0adc91d::t_797f760e3f96f6 30
+  s_1d2b0bb0adc91d::t_00e1dd58f90a31 200-262
+  s_1d2b0bb0adc91d::t_cb12cffb6a1e69 8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "0e3c3b925d6a37e7c81b0f0c8c63bd18d3d9844c",
+  "prompts": {},
+  "sessions": {
+    "s_1d2b0bb0adc91d": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "c32e8e73-f091-47e6-804b-0e7f05be80ec",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Juan Mrad <juansmrad@gmail.com>"
+    }
+  }
+}
