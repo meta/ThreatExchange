@@ -287,6 +287,7 @@ def _match_file(
         # Create a temporary file to hold the image bytes
         with tempfile.NamedTemporaryFile() as temp_file:
             temp_file.write(rotated_bytes)
+            temp_file.flush()
             temp_file_path = pathlib.Path(temp_file.name)
             hash = s_type.hash_from_file(temp_file_path)
             if not hash:
