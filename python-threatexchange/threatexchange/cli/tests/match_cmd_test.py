@@ -70,7 +70,7 @@ class MatchCommandTest(ThreatExchangeCLIE2eTest):
 
                 self.assert_cli_output(
                     ("--rotations", "photo", tmp_file.name),
-                    f"pdq {rotation.name} 16 (Sample Signals) INVESTIGATION_SEED",
+                    f"pdq {rotation.name} 14 (Sample Signals) INVESTIGATION_SEED",
                 )
 
     def test_photo_match_low_quality(self):
