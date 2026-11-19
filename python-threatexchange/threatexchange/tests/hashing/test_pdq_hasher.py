@@ -103,6 +103,16 @@ class PDQHasherModuleUnitTest(unittest.TestCase):
                         assert pdq_hash == test_data["expected_pdq"]
                         assert pdq_quality == test_data["expected_quality"]
 
+    def test_pdq_from_file_large_image_matches_cpp_reference(self):
+        """Images over 512px are downsampled exactly like pdq-photo-hasher."""
+        # sample-b.jpg is pdq/data/reg-test-input/dih/bridge-1-original.jpg;
+        # expected values are from pdq/cpp/output-regtest/out
+        path = pathlib.Path(__file__).parent / "resources/sample-b.jpg"
+        assert pdq_hasher.pdq_from_file(path) == (
+            "d8f8f0cee0f4a84f0637022a078f67f0b36e2ed596621e1d33e6339c4e9c9b22",
+            100,
+        )
+
     def test_pdq_from_bytes_palette_and_bilevel_use_pixel_values(self):
         """P and 1 images hash the same as their RGB conversion."""
         rgb = Image.new("RGB", (128, 128))

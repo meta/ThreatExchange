@@ -135,7 +135,7 @@ def test_unletterbox_with_photo_content(hash_cli: ThreatExchangeCLIE2eHelper):
     hash_cli.assert_cli_output(
         ("photo", str(clean_file)),
         [
-            "pdq f8f8f0cee0f4a84f06370a22038f63f0b36e2ed596621e1d33e6b39c4e9c9b22",
+            "pdq d8f8f0cee0f4a84f0637022a078f67f0b36e2ed596621e1d33e6339c4e9c9b22",
         ],
     )
 
@@ -143,7 +143,7 @@ def test_unletterbox_with_photo_content(hash_cli: ThreatExchangeCLIE2eHelper):
     hash_cli.assert_cli_output(
         ("--photo-preprocess=unletterbox", "photo", str(test_file)),
         [
-            "pdq d8f871cce0f4e84d8a370a32028f63f4b36e27d597621e1d33e6b39c4a9c9b22",
+            "pdq d8f8f1cce0f4e84d8e370a30028f63f0b36e2ed597621e1d33e6339c4e9c9b22",
         ],
     )
 
@@ -155,7 +155,7 @@ def test_unletterbox_with_photo_content(hash_cli: ThreatExchangeCLIE2eHelper):
             str(test_file),
         ),
         [
-            "pdq f8f8f0cee0f4a84f06370a22038f63f0b36e2ed596621e1d33e6b39c4e9c9b22",
+            "pdq f8f8f0cee0f4a84f0637022a038f67f0b36e2ed596621e1d33e6339c4e9c9b22",
         ],
     )
 
@@ -177,7 +177,7 @@ def test_file_content(hash_cli: ThreatExchangeCLIE2eHelper):
     hash_cli.assert_cli_output(
         ("file", str(photo_jpg)),
         [
-            "pdq f8f8f0cee0f4a84f06370a22038f63f0b36e2ed596621e1d33e6b39c4e9c9b22",
+            "pdq d8f8f0cee0f4a84f0637022a078f67f0b36e2ed596621e1d33e6339c4e9c9b22",
         ],
     )
 
