@@ -1,9 +1,13 @@
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 
+import datetime
+from types import SimpleNamespace
 import typing as t
 
 import pytest
+from flask import Flask
 from flask.testing import FlaskClient
+from flask_apscheduler import APScheduler
 
 from threatexchange.signal_type.pdq.signal import PdqSignal
 from threatexchange.signal_type.md5 import VideoMD5Signal
@@ -13,6 +17,7 @@ from threatexchange.exchanges.impl.static_sample import StaticSampleSignalExchan
 from OpenMediaMatch.tests.utils import app
 
 from OpenMediaMatch.background_tasks import fetcher, build_index
+from OpenMediaMatch.blueprints import matching
 from OpenMediaMatch.blueprints.matching import TMatchByBank
 from OpenMediaMatch.persistence import get_storage
 from threatexchange.storage.interfaces import SignalExchangeAPIConfig, BankConfig
@@ -229,3 +234,28 @@ def test_lookup_with_bank_filter(client_with_multi_bank_data: FlaskClient):
     assert resp.status_code == 200
     resp_json = t.cast(TMatchByBank, resp.json)
     assert len(resp_json) == 0
+
+
+def test_index_cache_loads_soon_after_startup(monkeypatch):
+    class FakeStorage:
+        def get_signal_type_configs(self):
+            return {"pdq": SimpleNamespace(signal_type=PdqSignal)}
+
+    class FakeScheduler:
+        def __init__(self, app):
+            self.app = app
+            self.jobs: dict[str, dict] = {}
+
+        def add_job(self, id, func, **kwargs):
+            self.jobs[id] = kwargs
+
+    monkeypatch.setattr(matching, "get_storage", FakeStorage)
+    flask_app = Flask(__name__)
+    flask_app.config["TASK_INDEX_CACHE_INTERVAL_SECONDS"] = 600
+    scheduler = FakeScheduler(flask_app)
+    start = datetime.datetime.now()
+    matching.initiate_index_cache(flask_app, t.cast(APScheduler, scheduler))
+
+    job = scheduler.jobs["Match Index Refresh[pdq]"]
+    assert job["seconds"] == 600
+    assert job["next_run_time"] - start < datetime.timedelta(seconds=5)

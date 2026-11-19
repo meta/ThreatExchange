@@ -53,9 +53,10 @@ def _convert_image_to_correct_array_dimension(image: Image.Image) -> np.ndarray:
     """
     Handle possible image format conversion or resizing.
     """
-    if image.mode == "LA" or image.mode == "I;16":
+    if image.mode in ("LA", "I;16", "P", "1"):
         # LA images (luminance with alpha) return 3 dimensional ndarray
-        # which is incompatible with pdqhash
+        # which is incompatible with pdqhash. P and 1 images would give
+        # palette indices and bools instead of pixel values.
         image = image.convert("RGB")
 
     array = _downsample(np.asarray(image))
