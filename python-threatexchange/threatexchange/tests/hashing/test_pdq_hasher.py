@@ -1,9 +1,12 @@
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 
 import base64
+import io
 import pathlib
 import tempfile
 import unittest
+
+from PIL import Image
 
 from threatexchange.signal_type.pdq import pdq_hasher
 
@@ -46,6 +49,12 @@ mTsaT0uOrP34DAi0HbAmACcyCmaKcnG++C9h8Wx/E+symlKut85ib2Na2uk2oUqAY0zIaGQ64v31
 dLQXVIVCt/xUqx1ILJ/bAcdDLuj1OjT0DwULeQovxm67AAAAAElFTkSuQmCC"""
 
 RANDOM_IMAGE_PDQ = "ad64cd9875e131a177b1f2a0d6b38ae1de9ea80421e4c51dde1b0363deba3466"
+
+
+def _png_bytes(image: Image.Image) -> bytes:
+    buf = io.BytesIO()
+    image.save(buf, format="PNG")
+    return buf.getvalue()
 
 
 class PDQHasherModuleUnitTest(unittest.TestCase):
@@ -93,6 +102,19 @@ class PDQHasherModuleUnitTest(unittest.TestCase):
                         pdq_hash, pdq_quality = pdq_hasher.pdq_from_bytes(bytes_data)
                         assert pdq_hash == test_data["expected_pdq"]
                         assert pdq_quality == test_data["expected_quality"]
+
+    def test_pdq_from_bytes_palette_and_bilevel_use_pixel_values(self):
+        """P and 1 images hash the same as their RGB conversion."""
+        rgb = Image.new("RGB", (128, 128))
+        rgb.putdata(
+            [(x * 2, y * 2, (x + y) % 256) for y in range(128) for x in range(128)]
+        )
+        for mode in ("P", "1"):
+            with self.subTest(mode=mode):
+                image = rgb.convert(mode)
+                assert pdq_hasher.pdq_from_bytes(
+                    _png_bytes(image)
+                ) == pdq_hasher.pdq_from_bytes(_png_bytes(image.convert("RGB")))
 
     def test_pdq_from_file(self):
         """Writes a few bytes to a file and runs the pdq hasher on it."""
