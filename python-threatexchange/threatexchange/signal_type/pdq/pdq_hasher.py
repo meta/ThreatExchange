@@ -51,7 +51,7 @@ def _pdq_from_numpy_array(array: np.ndarray) -> PDQOutput:
 
 def _convert_image_to_correct_array_dimension(image: Image.Image) -> np.ndarray:
     """
-    Handle possible image format conversion or
+    Handle possible image format conversion or resizing.
     """
     if image.mode == "LA" or image.mode == "I;16":
         # LA images (luminance with alpha) return 3 dimensional ndarray
