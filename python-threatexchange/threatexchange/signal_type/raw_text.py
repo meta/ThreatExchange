@@ -8,7 +8,7 @@ Wrapper around the raw text signal type.
 from dataclasses import dataclass
 import typing as t
 
-from weighted_levenshtein import lev
+from rapidfuzz.distance import Levenshtein
 
 from threatexchange import common
 from threatexchange.content_type.content_base import ContentType
@@ -63,6 +63,7 @@ class RawTextSignal(
     """
 
     INDICATOR_TYPE = "TEXT_STRING"
+    DEFAULT_PCT_DIFF_THRESHOLD = 5.0
 
     @classmethod
     def get_content_types(cls) -> t.List[t.Type[ContentType]]:
@@ -70,12 +71,15 @@ class RawTextSignal(
 
     @classmethod
     def matches_str(
-        cls, signal: str, haystack: str, pct_diff_threshold: float = 5.0
+        cls,
+        signal: str,
+        haystack: str,
+        pct_diff_threshold: float = DEFAULT_PCT_DIFF_THRESHOLD,
     ) -> signal_base.SignalComparisonResult:
         assert 0 < pct_diff_threshold <= 100
         a = common.normalize_string(signal)
         b = common.normalize_string(haystack)
-        max_match_distance = len(a) - len(a) * (100 - pct_diff_threshold) / 100
+        max_match_distance = cls._max_match_distance(a, pct_diff_threshold)
 
         ldiff = abs(len(a) - len(b))
 
@@ -84,12 +88,17 @@ class RawTextSignal(
                 ldiff, max_match_distance
             )
 
-        distance: float = lev(a, b)
+        distance = Levenshtein.distance(a, b)
 
         return signal_base.SignalComparisonResult(
             distance <= max_match_distance,
             RawTextDistance.from_levenshtein(a, distance),
         )
+
+    @staticmethod
+    def _max_match_distance(normalized_signal: str, pct_diff_threshold: float) -> float:
+        n = len(normalized_signal)
+        return n - n * (100 - pct_diff_threshold) / 100
 
     @classmethod
     def get_index_cls(cls) -> t.Type[index.SignalTypeIndex]:
@@ -112,5 +121,43 @@ class RawTextSignal(
 
 
 class LevenshteinLinearSearch(signal_base.TrivialLinearSearchMatchIndex):
+    """Linear search that normalizes each stored signal once instead of per query."""
+
     _SIGNAL_TYPE = RawTextSignal
-    # Could also convert these on ingestion
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._normalized: t.List[str] = []
+
+    def add(self, signal_str: str, entry: index.T) -> None:
+        super().add(signal_str, entry)
+        self._normalized.append(common.normalize_string(signal_str))
+
+    def query(self, query_hash: str) -> t.List[index.IndexMatch[index.T]]:
+        # Same result as matches_str on each entry, without its per-entry overhead
+        b = common.normalize_string(query_hash)
+        len_b = len(b)
+        pct = RawTextSignal.DEFAULT_PCT_DIFF_THRESHOLD
+        ret = []
+        for a, (_, payload) in zip(self._normalized, self.state):
+            max_dist = RawTextSignal._max_match_distance(a, pct)
+            if abs(len(a) - len_b) > max_dist:
+                continue
+            distance = Levenshtein.distance(a, b, score_cutoff=int(max_dist))
+            if distance <= max_dist:
+                ret.append(
+                    index.IndexMatch(
+                        RawTextDistance.from_levenshtein(a, distance), payload
+                    )
+                )
+        return ret
+
+    def __getstate__(self) -> t.Dict[str, t.Any]:
+        # Keep the pickled format identical to older versions
+        state = self.__dict__.copy()
+        del state["_normalized"]
+        return state
+
+    def __setstate__(self, state: t.Dict[str, t.Any]) -> None:
+        self.__dict__.update(state)
+        self._normalized = [common.normalize_string(s) for s, _ in self.state]
