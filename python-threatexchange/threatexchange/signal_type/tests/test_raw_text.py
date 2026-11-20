@@ -1,7 +1,10 @@
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 
+import pickle
+
 import pytest
-from threatexchange.signal_type.raw_text import RawTextSignal
+from threatexchange.signal_type.index import IndexMatch
+from threatexchange.signal_type.raw_text import LevenshteinLinearSearch, RawTextSignal
 from threatexchange.signal_type.tests.signal_type_test_helper import (
     MatchesStrAutoTest,
     THashValidateCase,
@@ -36,6 +39,44 @@ class TestRawTextSignal(MatchesStrAutoTest):
             ("a" * 19, "a" * 18 + "b", False, 1),  # Fails threshold 95%
             ("a" * 20, "a" * 19 + "b", True, 1),  # Meets threshold with 20 chars
         ]
+
+    @pytest.mark.parametrize(
+        "a, b, expected",
+        [
+            ("привет мир как дела", "привет мир как дела", True),
+            ("東京タワーに行きます", "東京タワーに行きます", True),
+            ("привет мир как дела", "пока", False),
+        ],
+    )
+    def test_matches_str_non_ascii(self, a: str, b: str, expected: bool) -> None:
+        assert self.TYPE.matches_str(a, b).match == expected
+
+    def test_index_matches_matches_str(self) -> None:
+        signals = [
+            "The quick brown fox jumps over the lazy dog",
+            "The quick brown fox jumps over the lazy cat",
+            "привет мир как дела у тебя сегодня",
+            "a" * 20,
+            "",
+        ]
+        queries = signals + [
+            "the QUICK brown fox jumps over the lazy dogs",
+            "a" * 19 + "b",
+            "something else entirely",
+        ]
+        idx = LevenshteinLinearSearch.build((s, i) for i, s in enumerate(signals))
+        idx = pickle.loads(pickle.dumps(idx))
+        for q in queries:
+            expected = {
+                i for i, s in enumerate(signals) if self.TYPE.matches_str(s, q).match
+            }
+            assert {m.metadata for m in idx.query(q)} == expected, q
+
+    def test_index_loads_old_pickle_state(self) -> None:
+        idx = LevenshteinLinearSearch.__new__(LevenshteinLinearSearch)
+        idx.__setstate__({"state": [("Hello World", 1)]})
+        matches: t.List[IndexMatch[int]] = idx.query("hello world")
+        assert [m.metadata for m in matches] == [1]
 
     @pytest.mark.parametrize(
         "input_val, expected_str",
