@@ -8,7 +8,11 @@ import functools
 from threatexchange.signal_type.index import (
     SignalSimilarityInfoWithIntDistance,
 )
-from threatexchange.signal_type.pdq.pdq_index import PDQIndex, PDQIndexMatch
+from threatexchange.signal_type.pdq.pdq_index import (
+    PDQFlatIndex,
+    PDQIndex,
+    PDQIndexMatch,
+)
 
 test_entries = [
     (
@@ -130,3 +134,35 @@ def test_supports_pickling(index):
             PDQIndexMatch(SignalSimilarityInfoWithIntDistance(16), test_entries[0][1]),
         ],
     )
+
+
+@pytest.mark.parametrize("index_cls", [PDQIndex, PDQFlatIndex])
+def test_add_all_failure_keeps_python_and_faiss_state_in_sync(index_cls):
+    index = index_cls.build(test_entries[:2])
+    bad_batch = [test_entries[2], ("ab" * 16, {"hash_type": "pdq", "system_id": 1})]
+
+    with pytest.raises(ValueError, match="position 1"):
+        index.add_all(bad_batch)
+
+    assert len(index) == 2
+    assert index.index.faiss_index.ntotal == 2
+
+    # A later valid add must still line up local ids with faiss ids.
+    index.add_all([test_entries[4]])
+    assert len(index) == 3
+    assert index.index.faiss_index.ntotal == 3
+    results = index.query(test_entries[4][0])
+    assert [r.metadata for r in results] == [test_entries[4][1]]
+
+
+def test_add_failure_leaves_index_unchanged():
+    index = PDQIndex.build(test_entries)
+    with pytest.raises(ValueError):
+        index.add("", {"hash_type": "pdq", "system_id": 1})
+    assert len(index) == len(test_entries)
+    assert index.index.faiss_index.ntotal == len(test_entries)
+
+
+def test_query_invalid_hash_raises_value_error(index):
+    with pytest.raises(ValueError, match="query hash"):
+        index.query("abcd")
