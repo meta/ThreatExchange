@@ -11,6 +11,61 @@ from threatexchange.signal_type.pdq.pdq_utils import BITS_IN_PDQ
 
 PDQ_HASH_TYPE = t.Union[str, bytes]
 
+_PDQ_HASH_NUM_BYTES = BITS_IN_PDQ // 8
+
+
+def _pdq_hashes_to_vectors(
+    hashes: t.Iterable[PDQ_HASH_TYPE], description: str = "hash"
+) -> numpy.ndarray:
+    """
+    Validates PDQ hashes and converts them to an (n, 32) uint8 array for faiss.
+
+    Each hash must be hexadecimal (a str, or ASCII hex bytes, per PDQ_HASH_TYPE)
+    that decodes to exactly 32 bytes (64 hex characters). The whole batch is
+    validated before anything is returned so callers never act on part of it.
+
+    Raises
+    ------
+    ValueError
+        Identifying the position and a (truncated) repr of the first invalid input.
+    """
+    vectors = []
+    for position, h in enumerate(hashes):
+        shown = repr(h) if len(repr(h)) <= 80 else repr(h)[:80] + "..."
+        try:
+            decoded = binascii.unhexlify(h)
+        except (ValueError, TypeError) as e:
+            raise ValueError(
+                f"Invalid PDQ {description} at position {position}: {shown} "
+                f"is not a valid hexadecimal string ({e})"
+            ) from e
+        if len(decoded) != _PDQ_HASH_NUM_BYTES:
+            raise ValueError(
+                f"Invalid PDQ {description} at position {position}: {shown} "
+                f"decodes to {len(decoded)} bytes, expected {_PDQ_HASH_NUM_BYTES} "
+                f"({_PDQ_HASH_NUM_BYTES * 2} hex characters)"
+            )
+        vectors.append(numpy.frombuffer(decoded, dtype=numpy.uint8))
+    if not vectors:
+        return numpy.empty((0, _PDQ_HASH_NUM_BYTES), dtype=numpy.uint8)
+    return numpy.array(vectors)
+
+
+def _prepare_add_inputs(
+    hashes: t.Iterable[PDQ_HASH_TYPE], custom_ids: t.Iterable[int]
+) -> t.Tuple[numpy.ndarray, numpy.ndarray]:
+    """
+    Validates and converts all inputs to `add` before the faiss index is touched.
+    """
+    vectors = _pdq_hashes_to_vectors(hashes)
+    i64_ids = numpy.array(list(map(uint64_to_int64, custom_ids)), dtype=numpy.int64)
+    if len(vectors) != len(i64_ids):
+        raise ValueError(
+            f"Got {len(vectors)} hashes but {len(i64_ids)} custom ids; "
+            "they must be the same length"
+        )
+    return vectors, i64_ids
+
 
 def uint64_to_int64(as_uint64: int):
     """
@@ -88,10 +143,7 @@ class PDQHashIndex(ABC):
             "0000000000000000000000000000000000000000000000000000000000000000" for a threshold of 16. Thus it would appear in
             the entry for both the hashes if they were both in the queries list.
         """
-        query_vectors = [
-            numpy.frombuffer(binascii.unhexlify(q), dtype=numpy.uint8) for q in queries
-        ]
-        qs = numpy.array(query_vectors)
+        qs = _pdq_hashes_to_vectors(queries, "query hash")
         limits, _, I = self.faiss_index.range_search(qs, threshhold + 1)
 
         if return_as_ids:
@@ -104,7 +156,7 @@ class PDQHashIndex(ABC):
 
         return [
             [output_fn(idx.item()) for idx in I[limits[i] : limits[i + 1]]]
-            for i in range(len(query_vectors))
+            for i in range(len(qs))
         ]
 
     def search_with_distance_in_result(
@@ -126,10 +178,7 @@ class PDQHashIndex(ABC):
         }
         """
 
-        query_vectors = [
-            numpy.frombuffer(binascii.unhexlify(q), dtype=numpy.uint8) for q in queries
-        ]
-        qs = numpy.array(query_vectors)
+        qs = _pdq_hashes_to_vectors(queries, "query hash")
         limits, similarities, I = self.faiss_index.range_search(qs, threshhold + 1)
 
         # for custom ids, we understood them initially as uint64 numbers and then coerced them internally to be signed
@@ -204,12 +253,10 @@ class PDQFlatHashIndex(PDQHashIndex):
             then the ids for the hashes will be assumed to be their respective index
             in hashes (i.e., the nth hash would have id n, starting from 0).
         """
-        hash_bytes = [binascii.unhexlify(hash) for hash in hashes]
-        vectors = list(
-            map(lambda h: numpy.frombuffer(h, dtype=numpy.uint8), hash_bytes)
-        )
-        i64_ids = list(map(uint64_to_int64, custom_ids))
-        self.faiss_index.add_with_ids(numpy.array(vectors), numpy.array(i64_ids))
+        vectors, i64_ids = _prepare_add_inputs(hashes, custom_ids)
+        if len(vectors) == 0:
+            return
+        self.faiss_index.add_with_ids(vectors, i64_ids)
 
     def hash_at(self, idx: int) -> str:
         i64_id = uint64_to_int64(idx)
@@ -259,12 +306,10 @@ class PDQMultiHashIndex(PDQHashIndex):
         -------
         a PDQMultiHashIndex of these hashes
         """
-        hash_bytes = [binascii.unhexlify(hash) for hash in hashes]
-        vectors = list(
-            map(lambda h: numpy.frombuffer(h, dtype=numpy.uint8), hash_bytes)
-        )
-        i64_ids = list(map(uint64_to_int64, custom_ids))
-        self.faiss_index.add_with_ids(numpy.array(vectors), numpy.array(i64_ids))
+        vectors, i64_ids = _prepare_add_inputs(hashes, custom_ids)
+        if len(vectors) == 0:
+            return
+        self.faiss_index.add_with_ids(vectors, i64_ids)
         self.__construct_index_rev_map()
 
     @property
