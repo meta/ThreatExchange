@@ -68,14 +68,18 @@ class PDQIndex(SignalTypeIndex[IndexT]):
         self.add_all(((signal_str, entry),))
 
     def add_all(self, entries: t.Iterable[t.Tuple[str, IndexT]]) -> None:
+        new_entries = list(entries)
+        if not new_entries:
+            return
         start = len(self.local_id_to_entry)
-        self.local_id_to_entry.extend(entries)
-        if start != len(self.local_id_to_entry):
-            # This function signature is very silly
-            self.index.add(
-                (e[0] for e in self.local_id_to_entry[start:]),
-                range(start, len(self.local_id_to_entry)),
-            )
+        # Add to the faiss index first: it validates the whole batch before
+        # modifying itself, so if it raises, local_id_to_entry is still in sync.
+        # This function signature is very silly
+        self.index.add(
+            (e[0] for e in new_entries),
+            range(start, start + len(new_entries)),
+        )
+        self.local_id_to_entry.extend(new_entries)
 
 
 class PDQFlatIndex(PDQIndex):
