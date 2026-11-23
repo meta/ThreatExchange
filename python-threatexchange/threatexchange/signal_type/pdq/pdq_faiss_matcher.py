@@ -7,11 +7,20 @@ import binascii
 import numpy
 from abc import ABC, abstractmethod
 
-from threatexchange.signal_type.pdq.pdq_utils import BITS_IN_PDQ
+from threatexchange.signal_type.pdq.pdq_utils import BITS_IN_PDQ, PDQ_HEX_STR_LEN
 
 PDQ_HASH_TYPE = t.Union[str, bytes]
 
-_PDQ_HASH_NUM_BYTES = BITS_IN_PDQ // 8
+
+def _invalid_pdq_hash_error(
+    description: str, position: int, h: object, reason: str
+) -> ValueError:
+    shown = repr(h)
+    if len(shown) > 80:
+        shown = shown[:80] + "..."
+    return ValueError(
+        f"Invalid PDQ {description} at position {position}: {shown} {reason}"
+    )
 
 
 def _pdq_hashes_to_vectors(
@@ -20,34 +29,33 @@ def _pdq_hashes_to_vectors(
     """
     Validates PDQ hashes and converts them to an (n, 32) uint8 array for faiss.
 
-    Each hash must be hexadecimal (a str, or ASCII hex bytes, per PDQ_HASH_TYPE)
-    that decodes to exactly 32 bytes (64 hex characters). The whole batch is
-    validated before anything is returned so callers never act on part of it.
+    Each hash must be PDQ_HEX_STR_LEN hexadecimal characters (a str, or ASCII hex
+    bytes, per PDQ_HASH_TYPE). The whole batch is validated before anything is
+    returned so callers never act on part of it.
 
     Raises
     ------
     ValueError
-        Identifying the position and a (truncated) repr of the first invalid input.
+        Identifying the position of the first invalid input.
     """
     vectors = []
     for position, h in enumerate(hashes):
-        shown = repr(h) if len(repr(h)) <= 80 else repr(h)[:80] + "..."
         try:
             decoded = binascii.unhexlify(h)
         except (ValueError, TypeError) as e:
-            raise ValueError(
-                f"Invalid PDQ {description} at position {position}: {shown} "
-                f"is not a valid hexadecimal string ({e})"
+            raise _invalid_pdq_hash_error(
+                description, position, h, f"is not a valid hex string ({e})"
             ) from e
-        if len(decoded) != _PDQ_HASH_NUM_BYTES:
-            raise ValueError(
-                f"Invalid PDQ {description} at position {position}: {shown} "
-                f"decodes to {len(decoded)} bytes, expected {_PDQ_HASH_NUM_BYTES} "
-                f"({_PDQ_HASH_NUM_BYTES * 2} hex characters)"
+        if len(decoded) * 2 != PDQ_HEX_STR_LEN:
+            raise _invalid_pdq_hash_error(
+                description,
+                position,
+                h,
+                f"has {len(decoded) * 2} hex characters, expected {PDQ_HEX_STR_LEN}",
             )
         vectors.append(numpy.frombuffer(decoded, dtype=numpy.uint8))
     if not vectors:
-        return numpy.empty((0, _PDQ_HASH_NUM_BYTES), dtype=numpy.uint8)
+        return numpy.empty((0, BITS_IN_PDQ // 8), dtype=numpy.uint8)
     return numpy.array(vectors)
 
 

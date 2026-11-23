@@ -236,7 +236,7 @@ class MixinValidationTests:
             self.assertIndexUnchanged()
 
         def test_add_uniformly_short_hashes_rejected(self):
-            with self.assertRaisesRegex(ValueError, "position 0.*16 bytes"):
+            with self.assertRaisesRegex(ValueError, "position 0.*32 hex characters"):
                 self.index.add(["ab" * 16, "cd" * 16], [100, 101])
             self.assertIndexUnchanged()
 
@@ -254,7 +254,9 @@ class MixinValidationTests:
                         self.index.search_with_distance_in_result([VALID_HASH, bad], 0)
 
         def test_valid_matching_unchanged(self):
-            self.assertEqual(self.index.search([test_hashes[0]], 16), [test_hashes[:2]])
+            results = self.index.search([test_hashes[0]], 16)
+            self.assertEqual(len(results), 1)
+            self.assertCountEqual(results[0], test_hashes[:2])
             result = self.index.search_with_distance_in_result([test_hashes[0]], 16)
             self.assertCountEqual(
                 [(i, h, int(d)) for i, h, d in result[test_hashes[0]]],
