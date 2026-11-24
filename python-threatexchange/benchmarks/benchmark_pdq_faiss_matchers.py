@@ -1,19 +1,18 @@
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 
 import argparse
-import binascii
 import time
 import pickle
 
 import numpy
 import faiss
 
-from threatexchange.signal_type.pdq.pdq_utils import BITS_IN_PDQ
-
 from threatexchange.signal_type.pdq.pdq_faiss_matcher import (
     PDQFlatHashIndex,
     PDQMultiHashIndex,
 )
+
+from benchmarks.benchmark_utils import generate_random_hash, generate_random_hash_with_hamming_distance
 
 parser = argparse.ArgumentParser(
     description="Run basic benchmarks comparing PDQHashIndex implementations using faiss",
@@ -74,45 +73,11 @@ if args.seed is None:
     print("use --seed ", seed, " to rerun with same random values")
     print("")
 
-
-def generate_random_hash():
-    """
-    returns a random 256 bit PDQ hash as a hexstring of 64 characters
-    """
-    hash_bytes = rng.bytes(BITS_IN_PDQ // 8)
-    return binascii.hexlify(hash_bytes).decode()
-
-
-def generate_random_distance_mask(hamming_distance):
-    """
-    returns a random numpy array of uint8s that can be used as bitwise mask
-    to generate a hash with the given hamming distance
-    """
-    ones = numpy.ones(hamming_distance, dtype=numpy.uint8)
-    bitmask = numpy.pad(
-        ones, (0, BITS_IN_PDQ - hamming_distance), "constant", constant_values=0
-    )
-    return numpy.packbits(rng.permutation(bitmask))
-
-
-def generate_random_hash_with_hamming_distance(original_hash, desired_hamming_distance):
-    """
-    returns a random 256 bit PDQ hash as a hexstring of 64 characters that is the given
-    hamming distance from the provided original hash
-    """
-    original_hash_bytes = numpy.frombuffer(
-        binascii.unhexlify(original_hash), dtype=numpy.uint8
-    )
-    mask = generate_random_distance_mask(desired_hamming_distance)
-    new_hash_bytes = numpy.bitwise_xor(original_hash_bytes, mask).tobytes()
-    return binascii.hexlify(new_hash_bytes).decode()
-
-
 ######
 # Generate Random Dataset and Build Indexes
 ######
 
-dataset = [generate_random_hash() for _ in range(args.dataset_size)]
+dataset = [generate_random_hash(rng) for _ in range(args.dataset_size)]
 
 
 custom_ids = [i + 100_000_000_000_000 for i in range(args.dataset_size)]
@@ -156,7 +121,7 @@ for threshold in args.thresholds:
     # Create queries with hamming distance of threshold compared to their search targets
     search_targets = rng.choice(dataset, size=args.num_queries)
     queries = [
-        generate_random_hash_with_hamming_distance(target, threshold)
+        generate_random_hash_with_hamming_distance(rng, target, threshold)
         for target in search_targets
     ]
 
