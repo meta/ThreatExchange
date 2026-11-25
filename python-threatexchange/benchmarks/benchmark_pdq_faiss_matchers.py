@@ -12,7 +12,10 @@ from threatexchange.signal_type.pdq.pdq_faiss_matcher import (
     PDQMultiHashIndex,
 )
 
-from benchmarks.benchmark_utils import generate_random_hash, generate_random_hash_with_hamming_distance
+from benchmarks.benchmark_utils import (
+    generate_random_hash,
+    generate_random_hash_with_hamming_distance,
+)
 
 parser = argparse.ArgumentParser(
     description="Run basic benchmarks comparing PDQHashIndex implementations using faiss",

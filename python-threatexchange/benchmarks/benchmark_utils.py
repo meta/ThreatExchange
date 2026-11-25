@@ -5,6 +5,7 @@ import numpy
 
 from threatexchange.signal_type.pdq.pdq_utils import BITS_IN_PDQ
 
+
 def generate_random_hash(rng):
     """
     returns a random 256 bit PDQ hash as a hexstring of 64 characters
@@ -25,7 +26,9 @@ def generate_random_distance_mask(rng, hamming_distance):
     return numpy.packbits(rng.permutation(bitmask))
 
 
-def generate_random_hash_with_hamming_distance(rng, original_hash, desired_hamming_distance):
+def generate_random_hash_with_hamming_distance(
+    rng, original_hash, desired_hamming_distance
+):
     """
     returns a random 256 bit PDQ hash as a hexstring of 64 characters that is the given
     hamming distance from the provided original hash

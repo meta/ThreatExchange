@@ -13,7 +13,10 @@ from threatexchange.signal_type.pdq.pdq_index import PDQFlatIndex, PDQIndex
 from threatexchange.signal_type.pdq.pdq_index2 import PDQIndex2
 from threatexchange.signal_type.pdq.pdq_utils import BITS_IN_PDQ
 
-from benchmarks.benchmark_utils import generate_random_hash, generate_random_hash_with_hamming_distance
+from benchmarks.benchmark_utils import (
+    generate_random_hash,
+    generate_random_hash_with_hamming_distance,
+)
 
 # Matches PDQMultiHashIndex's default configuration
 MULTI_HASH_NHASH = 16
@@ -72,6 +75,7 @@ if args.seed is None:
 ######
 
 IndexFactory = t.Callable[[], SignalTypeIndex[int]]
+
 
 def make_float_flat_index2(threshold: int) -> IndexFactory:
     return lambda: PDQIndex2(faiss.IndexFlatL2(BITS_IN_PDQ), threshold=threshold)
