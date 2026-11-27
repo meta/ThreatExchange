@@ -236,6 +236,11 @@ $ threatexchange fetch
 
 [StopNCII.org](https://stopncii.org/) allows people to upload hashes of intimate imagery/videos when someone is threatening to share them. If you are a partner with credentials, you can download and use hashes from that API.
 
+Use your FetchKey as `<FUNCTION_KEY>`. The underlying `StopNCIIAPI` client also uses
+it for `submit_feedback()` and `submit_feedbacks()`. Callers that need a separate
+feedback key can supply it through the client's existing `additional_function_keys`
+argument; the credentials format does not require a separate feedback key.
+
 ```
 # Step 1 - TX_STOPNCII_KEYS Environment variable - comma separated
 $ TX_STOPNCII_KEYS='<FUNCTION_KEY>,<SUBSCRIPTION_KEY>'
@@ -245,11 +250,6 @@ $ export TX_STOPNCII_KEYS
 $ touch ~/.tx_stopncii_keys
 $ chmod 600 ~/.tx_stopncii_keys
 $ echo '<FUNCTION_KEY>,<SUBSCRIPTION_KEY>' > ~/.tx_stopncii_keys
-
-# Optional - to send feedback on hashes back to StopNCII, add your Submit
-# Feedback function key as a fourth value. The third value, a base URL
-# override, can be left empty.
-$ TX_STOPNCII_KEYS='<FUNCTION_KEY>,<SUBSCRIPTION_KEY>,,<FEEDBACK_FUNCTION_KEY>'
 
 # Step 2 - set up config
 $ threatexchange config collab edit stop_ncii --create 'StopNCII'

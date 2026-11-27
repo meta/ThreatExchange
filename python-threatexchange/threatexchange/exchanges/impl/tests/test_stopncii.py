@@ -1,10 +1,11 @@
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 
+import json
 import pytest
 import typing as t
 
 from threatexchange.exchanges.fetch_state import AggregateSignalOpinionCategory
-from threatexchange.exchanges.clients.stopncii.tests.test_api import api
+from threatexchange.exchanges.clients.stopncii.tests.test_api import api, http_response
 
 from threatexchange.exchanges.impl.stop_ncii_api import (
     StopNCIICredentials,
@@ -12,7 +13,51 @@ from threatexchange.exchanges.impl.stop_ncii_api import (
 )
 from threatexchange.exchanges.collab_config import CollaborationConfigWithDefaults
 
-from threatexchange.exchanges.clients.stopncii.api import StopNCIIAPI, StopNCIIEndpoint
+from threatexchange.exchanges.clients.stopncii.api import (
+    StopNCIIAPI,
+    StopNCIICSPFeedbackValue,
+    StopNCIISignalType,
+)
+
+
+@pytest.mark.parametrize(
+    ("credentials", "base_url"),
+    [
+        ("fetch,subscription", StopNCIIAPI.BASE_URL),
+        ("fetch,subscription,", StopNCIIAPI.BASE_URL),
+        ("fetch,subscription,https://example.test/v1", "https://example.test/v1"),
+    ],
+)
+def test_for_collab_submits_feedback_with_fetch_key(
+    http_response, credentials: str, base_url: str
+):
+    sent, _ = http_response
+    exchange = StopNCIISignalExchangeAPI.for_collab(
+        CollaborationConfigWithDefaults("Test"),
+        StopNCIICredentials._from_str(credentials),
+    )
+    exchange.api.submit_feedback(
+        StopNCIISignalType.ImagePDQ,
+        "test-hash",
+        StopNCIICSPFeedbackValue.Blocked,
+        {"test-tag"},
+    )
+    assert len(sent) == 1
+    request = sent[0]
+    assert request.method == "POST"
+    assert request.url == base_url + "/SubmitFeedback"
+    assert request.headers["x-functions-key"] == "fetch"
+    assert request.headers["Ocp-Apim-Subscription-Key"] == "subscription"
+    assert json.loads(request.body) == {
+        "count": 1,
+        "hashFeedbacks": [
+            {
+                "hashValue": "test-hash",
+                "feedbackValue": "Blocked",
+                "tags": ["test-tag"],
+            }
+        ],
+    }
 
 
 @pytest.fixture
@@ -62,41 +107,3 @@ def test_fetch(exchange: StopNCIISignalExchangeAPI, monkeypatch: pytest.MonkeyPa
     assert ao.tags == {"Nude", "Objectionable"}
 
     assert next(it, None) is None  # We fetched everything
-
-
-@pytest.mark.parametrize(
-    ("s", "base_url", "feedback_key"),
-    [
-        ("fetch,sub", None, None),
-        ("fetch,sub,https://example.test", "https://example.test", None),
-        ("fetch,sub,,feedback", None, "feedback"),
-        ("fetch,sub,https://example.test,feedback", "https://example.test", "feedback"),
-    ],
-)
-def test_credentials_from_str(
-    s: str, base_url: t.Optional[str], feedback_key: t.Optional[str]
-):
-    creds = StopNCIICredentials._from_str(s)
-    assert creds.fetch_function_key == "fetch"
-    assert creds.subscription_key == "sub"
-    assert creds.base_url_override == base_url
-    assert creds.feedback_function_key == feedback_key
-
-
-def test_credentials_from_str_invalid():
-    with pytest.raises(ValueError):
-        StopNCIICredentials._from_str("only_one_part")
-    with pytest.raises(ValueError):
-        StopNCIICredentials._from_str("a,b,c,d,e")
-
-
-def test_for_collab_passes_feedback_key():
-    collab = CollaborationConfigWithDefaults("Test")
-    with_key = StopNCIISignalExchangeAPI.for_collab(
-        collab, StopNCIICredentials._from_str("fetch,sub,,feedback")
-    )
-    assert with_key.api._function_keys[StopNCIIEndpoint.SubmitFeedback] == "feedback"
-    without_key = StopNCIISignalExchangeAPI.for_collab(
-        collab, StopNCIICredentials._from_str("fetch,sub")
-    )
-    assert StopNCIIEndpoint.SubmitFeedback not in without_key.api._function_keys
