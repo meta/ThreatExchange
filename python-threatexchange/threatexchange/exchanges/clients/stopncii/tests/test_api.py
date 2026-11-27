@@ -1,6 +1,7 @@
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 
 import pytest
+import requests
 import typing as t
 from threatexchange.exchanges.clients.stopncii.api import (
     StopNCIIAPI,
@@ -17,6 +18,82 @@ PAGE_TOKEN = (
     "QUFBQUFBQUFBPT0jUlQ6MSNUUkM6MiNSVEQ6SFBKSm1LVDF1WnFsQkJuR3lOU09C"
     "TUhaRytHL1FBPT0jSVNWOjIjSUVPOjY1NTY3"
 )
+
+
+@pytest.fixture
+def http_response(monkeypatch: pytest.MonkeyPatch):
+    """Exercise request preparation and response handling without network access."""
+    sent: t.List[requests.PreparedRequest] = []
+    response = requests.Response()
+    response.status_code = 200
+    response._content = b""
+
+    def send(session, request, **kwargs):
+        sent.append(request)
+        response.request = request
+        return response
+
+    monkeypatch.setattr(requests.Session, "send", send)
+    return sent, response
+
+
+def test_feedback_function_key_override(http_response):
+    sent, _ = http_response
+    client = StopNCIIAPI(
+        "subscription", "fetch", {StopNCIIEndpoint.SubmitFeedback: "feedback"}
+    )
+    client.submit_feedbacks({})
+    assert sent[0].headers["x-functions-key"] == "feedback"
+    assert sent[0].headers["Ocp-Apim-Subscription-Key"] == "subscription"
+
+
+def test_fetch_function_key_unchanged(http_response):
+    sent, response = http_response
+    response._content = b"{}"
+    client = StopNCIIAPI("subscription", "fetch")
+    assert client._get(StopNCIIEndpoint.FetchHashes) == {}
+    assert sent[0].headers["x-functions-key"] == "fetch"
+
+
+def test_submit_hashes_still_requires_explicit_key(http_response):
+    sent, _ = http_response
+    with pytest.raises(ValueError, match="function key"):
+        StopNCIIAPI("subscription", "fetch")._post(StopNCIIEndpoint.SubmitHashes)
+    assert not sent
+
+
+@pytest.mark.parametrize("body", [b"not json", b" "])
+def test_feedback_rejects_malformed_nonempty_response(http_response, body):
+    _, response = http_response
+    response._content = body
+    with pytest.raises(requests.exceptions.JSONDecodeError):
+        StopNCIIAPI("subscription", "fetch").submit_feedbacks({})
+
+
+def test_feedback_http_error_is_not_ignored(http_response):
+    _, response = http_response
+    response.status_code = 403
+    with pytest.raises(requests.HTTPError):
+        StopNCIIAPI("subscription", "fetch").submit_feedbacks({})
+
+
+def test_post_other_endpoints_still_require_json(http_response):
+    _, response = http_response
+    client = StopNCIIAPI(
+        "subscription", "fetch", {StopNCIIEndpoint.SubmitHashes: "submit"}
+    )
+    with pytest.raises(requests.exceptions.JSONDecodeError):
+        client._post(StopNCIIEndpoint.SubmitHashes)
+    response._content = b'{"count": 1}'
+    assert client._post(StopNCIIEndpoint.SubmitHashes) == {"count": 1}
+
+
+def test_feedback_nonempty_json_response(http_response):
+    _, response = http_response
+    response._content = b'{"count": 1}'
+    assert StopNCIIAPI("subscription", "fetch")._post(
+        StopNCIIEndpoint.SubmitFeedback
+    ) == {"count": 1}
 
 
 def mock_get_impl(endpoint: str, **json):

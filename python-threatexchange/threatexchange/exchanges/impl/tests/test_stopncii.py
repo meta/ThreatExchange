@@ -1,15 +1,63 @@
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 
+import json
 import pytest
 import typing as t
 
 from threatexchange.exchanges.fetch_state import AggregateSignalOpinionCategory
-from threatexchange.exchanges.clients.stopncii.tests.test_api import api
+from threatexchange.exchanges.clients.stopncii.tests.test_api import api, http_response
 
-from threatexchange.exchanges.impl.stop_ncii_api import StopNCIISignalExchangeAPI
+from threatexchange.exchanges.impl.stop_ncii_api import (
+    StopNCIICredentials,
+    StopNCIISignalExchangeAPI,
+)
 from threatexchange.exchanges.collab_config import CollaborationConfigWithDefaults
 
-from threatexchange.exchanges.clients.stopncii.api import StopNCIIAPI
+from threatexchange.exchanges.clients.stopncii.api import (
+    StopNCIIAPI,
+    StopNCIICSPFeedbackValue,
+    StopNCIISignalType,
+)
+
+
+@pytest.mark.parametrize(
+    ("credentials", "base_url"),
+    [
+        ("fetch,subscription", StopNCIIAPI.BASE_URL),
+        ("fetch,subscription,", StopNCIIAPI.BASE_URL),
+        ("fetch,subscription,https://example.test/v1", "https://example.test/v1"),
+    ],
+)
+def test_for_collab_submits_feedback_with_fetch_key(
+    http_response, credentials: str, base_url: str
+):
+    sent, _ = http_response
+    exchange = StopNCIISignalExchangeAPI.for_collab(
+        CollaborationConfigWithDefaults("Test"),
+        StopNCIICredentials._from_str(credentials),
+    )
+    exchange.api.submit_feedback(
+        StopNCIISignalType.ImagePDQ,
+        "test-hash",
+        StopNCIICSPFeedbackValue.Blocked,
+        {"test-tag"},
+    )
+    assert len(sent) == 1
+    request = sent[0]
+    assert request.method == "POST"
+    assert request.url == base_url + "/SubmitFeedback"
+    assert request.headers["x-functions-key"] == "fetch"
+    assert request.headers["Ocp-Apim-Subscription-Key"] == "subscription"
+    assert json.loads(request.body) == {
+        "count": 1,
+        "hashFeedbacks": [
+            {
+                "hashValue": "test-hash",
+                "feedbackValue": "Blocked",
+                "tags": ["test-tag"],
+            }
+        ],
+    }
 
 
 @pytest.fixture

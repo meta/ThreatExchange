@@ -99,7 +99,7 @@ class FetchHashesResponse:
 
 @enum.unique
 class StopNCIIEndpoint(enum.Enum):
-    """Endpoints (with their own function keys) on StopNCII"""
+    """Endpoints on StopNCII."""
 
     FetchHashes = "FetchHashes"
     SubmitHashes = "SubmitHashes"
@@ -129,6 +129,10 @@ class StopNCIIAPI:
     ) -> None:
         self._function_keys = dict(additional_function_keys or {})
         self._function_keys[StopNCIIEndpoint.FetchHashes] = fetch_function_key
+        # SubmitFeedback accepts the fetch key unless an explicit override is supplied.
+        self._function_keys.setdefault(
+            StopNCIIEndpoint.SubmitFeedback, fetch_function_key
+        )
         self._subscription_key = subscription_key
 
         self._base_url = base_url_override or self.BASE_URL
@@ -189,15 +193,18 @@ class StopNCIIAPI:
 
     def _post(self, endpoint: StopNCIIEndpoint, *, json=None) -> t.Any:
         """
-        Perform an HTTP POST request, and return the JSON response payload.
+        Perform an HTTP POST request, returning JSON or None for empty feedback responses.
 
-        No timeout or retry strategy.
+        Uses the session timeout, with no retries for POST.
         """
 
         url = "/".join((self._base_url, endpoint.value))
         with self._get_session(endpoint) as session:
             response = session.post(url, json=json)
             response.raise_for_status()
+            # SubmitFeedback documents a successful 200 response with no body.
+            if endpoint == StopNCIIEndpoint.SubmitFeedback and not response.content:
+                return None
             return response.json()
 
     def fetch_hashes(

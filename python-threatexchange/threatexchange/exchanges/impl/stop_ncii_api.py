@@ -91,7 +91,7 @@ class StopNCIICredentials(auth.CredentialHelper):
 
     fetch_function_key: str = field(
         metadata={
-            "help": "API key for the Fetch Hashes endpoint. Used when downloading hashes from StopNCII."
+            "help": "API key for fetching hashes and submitting feedback to StopNCII."
         }
     )
     subscription_key: str = field(
@@ -116,7 +116,7 @@ class StopNCIICredentials(auth.CredentialHelper):
             fetch_function_key, subscription_key, base_url_override = parts
         else:
             raise ValueError(
-                "Invalid stopNCII credentials format. Should be 'function_key,subscription_key' OR 'function_key_subscription_key,base_url_override'."
+                "Invalid stopNCII credentials format. Should be 'function_key,subscription_key' OR 'function_key,subscription_key,base_url_override'."
             )
 
         return cls(
